@@ -5,7 +5,7 @@ from torch.nn import functional as F
 from torch import autograd
 from torch.autograd import Variable
 import utils
-
+import ipdb
 
 class MLP(nn.Module):
     def __init__(self, input_size, output_size,
@@ -85,6 +85,7 @@ class MLP(nn.Module):
 
     def consolidate(self, fisher):
         for n, p in self.named_parameters():
+            ipdb.set_trace()
             n = n.replace('.', '__')
             self.register_buffer('{}_mean'.format(n), p.data.clone())
             self.register_buffer('{}_fisher'

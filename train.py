@@ -94,36 +94,36 @@ def train(model, train_datasets, test_datasets, epochs_per_task=10,
                 ))
 
                 # Send test precision to the visdom server.
-                if iteration % eval_log_interval == 0:
-                    names = [
-                        'task {}'.format(i+1) for i in
-                        range(len(train_datasets))
-                    ]
-                    precs = [
-                        utils.validate(
-                            model, test_datasets[i], test_size=test_size,
-                            cuda=cuda, verbose=False,
-                        ) if i+1 <= task else 0 for i in
-                        range(len(train_datasets))
-                    ]
-                    title = (
-                        'precision (consolidated)' if consolidate else
-                        'precision'
-                    )
-                    visual.visualize_scalars(
-                        vis, precs, names, title,
-                        iteration
-                    )
+                # if iteration % eval_log_interval == 0:
+                    # names = [
+                        # 'task {}'.format(i+1) for i in
+                        # range(len(train_datasets))
+                    # ]
+                    # precs = [
+                        # utils.validate(
+                            # model, test_datasets[i], test_size=test_size,
+                            # cuda=cuda, verbose=False,
+                        # ) if i+1 <= task else 0 for i in
+                        # range(len(train_datasets))
+                    # ]
+                    # title = (
+                        # 'precision (consolidated)' if consolidate else
+                        # 'precision'
+                    # )
+                    # visual.visualize_scalars(
+                        # vis, precs, names, title,
+                        # iteration
+                    # )
 
                 # Send losses to the visdom server.
-                if iteration % loss_log_interval == 0:
-                    title = 'loss (consolidated)' if consolidate else 'loss'
-                    visual.visualize_scalars(
-                        vis,
-                        [loss, ce_loss, ewc_loss],
-                        ['total', 'cross entropy', 'ewc'],
-                        title, iteration
-                    )
+                # if iteration % loss_log_interval == 0:
+                    # title = 'loss (consolidated)' if consolidate else 'loss'
+                    # visual.visualize_scalars(
+                        # vis,
+                        # [loss, ce_loss, ewc_loss],
+                        # ['total', 'cross entropy', 'ewc'],
+                        # title, iteration
+                    # )
 
         if consolidate and task < len(train_datasets):
             # estimate the fisher information of the parameters and consolidate
@@ -131,6 +131,9 @@ def train(model, train_datasets, test_datasets, epochs_per_task=10,
             print(
                 '=> Estimating diagonals of the fisher information matrix...',
                 flush=True, end='',
+            )
+            estimated_fisher = model.estimate_fisher(
+                train_dataset, fisher_estimation_sample_size
             )
             model.consolidate(model.estimate_fisher(
                 train_dataset, fisher_estimation_sample_size
